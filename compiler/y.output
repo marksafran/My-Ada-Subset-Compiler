@@ -1,0 +1,2037 @@
+   0  $accept : program $end
+
+   1  program : procedure ';'
+
+   2  procedure : procHead procDecls procStmts procExceptions
+
+   3  procHead : pushHead optionalParams
+
+   4  pushHead : PROCEDURE ID
+
+   5  optionalParams : '(' parameterList ')'
+   6                 |
+
+   7  procDecls : IS decls begin
+   8            | IS begin
+
+   9  decls : decl ';' decls
+  10        | decl ';'
+
+  11  begin : BEG
+
+  12  procStmts : stmts
+
+  13  procExceptions : exception END
+  14                 | END
+
+  15  stmts : stmts stmt
+  16        | stmt
+
+  17  parameterList : parameter ';' parameterList
+  18                | parameter
+
+  19  parameter : idList ':' mode typeName
+
+  20  mode : IN
+  21       | OUT
+  22       | IN OUT
+  23       |
+
+  24  typeName : ID
+
+  25  decl : arrayRecordRange
+  26       | variable
+  27       | constant
+  28       | exceptionDecl
+  29       | procedure
+
+  30  arrayRecordRange : TYPE ID IS option
+
+  31  option : array
+  32         | record
+  33         | range
+
+  34  array : ARRAY '(' index DOTDOT index ')' OF ID
+
+  35  index : NUMBER
+  36        | ID
+
+  37  record : RECORD componentList ENDREC
+
+  38  componentList : componentList component
+  39                | component
+
+  40  component : variable ';'
+
+  41  range : RANGE index DOTDOT index
+
+  42  variable : idList ':' ID
+
+  43  idList : idList ',' ID
+  44         | ID
+
+  45  constant : idList ':' CONSTANT ASSIGN constantExpr
+
+  46  constantExpr : expr
+
+  47  exceptionDecl : idList ':' EXCEPTION
+
+  48  stmt : ID ASSIGN expr ';'
+  49       | ID '(' exprs ')' ';'
+  50       | ID ';'
+  51       | NULLWORD ';'
+  52       | loopOption ';'
+  53       | ifStmt ';'
+  54       | RAISE ID ';'
+
+  55  loopOption : loopStart loopStmts ENDLOOP
+
+  56  loopStart : LOOP
+
+  57  loopStmts : loopStmts loopStmt
+  58            | loopStmt
+
+  59  loopStmt : stmt
+  60           | EXIT ';'
+  61           | EXITWHEN expr ';'
+
+  62  ifStmt : beginIf thenPart stmtsPart elseifOption elseOption ENDIF
+
+  63  beginIf : IF
+
+  64  thenPart : expr THEN
+
+  65  stmtsPart : stmts
+
+  66  elseifOption : elseifOption beginElseif thenPart stmtsPart
+  67               |
+
+  68  beginElseif : ELSEIF
+
+  69  elseOption : beginElse stmtsPart
+  70             |
+
+  71  beginElse : ELSE
+
+  72  exprs : expr ',' exprs
+  73        | expr
+
+  74  expr : expr booleanOp relation
+  75       | relation
+
+  76  booleanOp : AND
+  77            | OR
+
+  78  relation : relation relationalOp simpleExpr
+  79           | simpleExpr
+
+  80  relationalOp : EQ
+  81               | NEQ
+  82               | LT
+  83               | LTE
+  84               | GT
+  85               | GTE
+
+  86  simpleExpr : '-' term
+  87             | term
+  88             | simpleExpr addingOp term
+
+  89  addingOp : '+'
+  90           | '-'
+
+  91  term : factor
+  92       | term multiplyingOp factor
+
+  93  multiplyingOp : '*'
+  94                | '/'
+
+  95  factor : factor EXP primary
+  96         | primary
+  97         | NOT primary
+
+  98  primary : NUMBER
+  99          | ID
+ 100          | ID '(' expr ')'
+ 101          | '(' expr ')'
+
+ 102  exception : EXCEPTION exHandler
+
+ 103  exHandler : exHandler WHEN afterWhen
+ 104            | WHEN afterWhen
+
+ 105  afterWhen : choice ARROW stmts
+ 106            | OTHERS ARROW stmts
+
+ 107  choice : ID '|' choice
+ 108         | ID
+
+state 0
+	$accept : . program $end  (0)
+
+	PROCEDURE  shift 1
+	.  error
+
+	program  goto 2
+	pushHead  goto 3
+	procHead  goto 4
+	procedure  goto 5
+
+
+state 1
+	pushHead : PROCEDURE . ID  (4)
+
+	ID  shift 6
+	.  error
+
+
+state 2
+	$accept : program . $end  (0)
+
+	$end  accept
+
+
+state 3
+	procHead : pushHead . optionalParams  (3)
+	optionalParams : .  (6)
+
+	'('  shift 7
+	IS  reduce 6
+
+	optionalParams  goto 8
+
+
+state 4
+	procedure : procHead . procDecls procStmts procExceptions  (2)
+
+	IS  shift 9
+	.  error
+
+	procDecls  goto 10
+
+
+state 5
+	program : procedure . ';'  (1)
+
+	';'  shift 11
+	.  error
+
+
+state 6
+	pushHead : PROCEDURE ID .  (4)
+
+	.  reduce 4
+
+
+state 7
+	optionalParams : '(' . parameterList ')'  (5)
+
+	ID  shift 12
+	.  error
+
+	idList  goto 13
+	parameter  goto 14
+	parameterList  goto 15
+
+
+state 8
+	procHead : pushHead optionalParams .  (3)
+
+	.  reduce 3
+
+
+state 9
+	procDecls : IS . decls begin  (7)
+	procDecls : IS . begin  (8)
+
+	BEG  shift 16
+	PROCEDURE  shift 1
+	TYPE  shift 17
+	ID  shift 12
+	.  error
+
+	idList  goto 18
+	arrayRecordRange  goto 19
+	pushHead  goto 3
+	procHead  goto 4
+	procedure  goto 20
+	decls  goto 21
+	begin  goto 22
+	decl  goto 23
+	variable  goto 24
+	constant  goto 25
+	exceptionDecl  goto 26
+
+
+state 10
+	procedure : procHead procDecls . procStmts procExceptions  (2)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	procStmts  goto 33
+	stmts  goto 34
+	stmt  goto 35
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+
+
+state 11
+	program : procedure ';' .  (1)
+
+	.  reduce 1
+
+
+state 12
+	idList : ID .  (44)
+
+	.  reduce 44
+
+
+state 13
+	parameter : idList . ':' mode typeName  (19)
+	idList : idList . ',' ID  (43)
+
+	':'  shift 39
+	','  shift 40
+	.  error
+
+
+state 14
+	parameterList : parameter . ';' parameterList  (17)
+	parameterList : parameter .  (18)
+
+	';'  shift 41
+	')'  reduce 18
+
+
+state 15
+	optionalParams : '(' parameterList . ')'  (5)
+
+	')'  shift 42
+	.  error
+
+
+state 16
+	begin : BEG .  (11)
+
+	.  reduce 11
+
+
+state 17
+	arrayRecordRange : TYPE . ID IS option  (30)
+
+	ID  shift 43
+	.  error
+
+
+state 18
+	variable : idList . ':' ID  (42)
+	idList : idList . ',' ID  (43)
+	constant : idList . ':' CONSTANT ASSIGN constantExpr  (45)
+	exceptionDecl : idList . ':' EXCEPTION  (47)
+
+	':'  shift 44
+	','  shift 40
+	.  error
+
+
+state 19
+	decl : arrayRecordRange .  (25)
+
+	.  reduce 25
+
+
+state 20
+	decl : procedure .  (29)
+
+	.  reduce 29
+
+
+state 21
+	procDecls : IS decls . begin  (7)
+
+	BEG  shift 16
+	.  error
+
+	begin  goto 45
+
+
+state 22
+	procDecls : IS begin .  (8)
+
+	.  reduce 8
+
+
+state 23
+	decls : decl . ';' decls  (9)
+	decls : decl . ';'  (10)
+
+	';'  shift 46
+	.  error
+
+
+state 24
+	decl : variable .  (26)
+
+	.  reduce 26
+
+
+state 25
+	decl : constant .  (27)
+
+	.  reduce 27
+
+
+state 26
+	decl : exceptionDecl .  (28)
+
+	.  reduce 28
+
+
+state 27
+	stmt : NULLWORD . ';'  (51)
+
+	';'  shift 47
+	.  error
+
+
+state 28
+	loopStart : LOOP .  (56)
+
+	.  reduce 56
+
+
+state 29
+	beginIf : IF .  (63)
+
+	.  reduce 63
+
+
+state 30
+	stmt : RAISE . ID ';'  (54)
+
+	ID  shift 48
+	.  error
+
+
+state 31
+	stmt : ID . ASSIGN expr ';'  (48)
+	stmt : ID . '(' exprs ')' ';'  (49)
+	stmt : ID . ';'  (50)
+
+	ASSIGN  shift 49
+	';'  shift 50
+	'('  shift 51
+	.  error
+
+
+state 32
+	loopOption : loopStart . loopStmts ENDLOOP  (55)
+
+	EXITWHEN  shift 52
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	EXIT  shift 53
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	stmt  goto 54
+	loopOption  goto 36
+	ifStmt  goto 37
+	loopStmts  goto 55
+	loopStmt  goto 56
+	beginIf  goto 38
+
+
+state 33
+	procedure : procHead procDecls procStmts . procExceptions  (2)
+
+	END  shift 57
+	EXCEPTION  shift 58
+	.  error
+
+	procExceptions  goto 59
+	exception  goto 60
+
+
+state 34
+	procStmts : stmts .  (12)
+	stmts : stmts . stmt  (15)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	END  reduce 12
+	EXCEPTION  reduce 12
+
+	loopStart  goto 32
+	stmt  goto 61
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+
+
+state 35
+	stmts : stmt .  (16)
+
+	.  reduce 16
+
+
+state 36
+	stmt : loopOption . ';'  (52)
+
+	';'  shift 62
+	.  error
+
+
+state 37
+	stmt : ifStmt . ';'  (53)
+
+	';'  shift 63
+	.  error
+
+
+state 38
+	ifStmt : beginIf . thenPart stmtsPart elseifOption elseOption ENDIF  (62)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 71
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+	thenPart  goto 75
+
+
+state 39
+	parameter : idList ':' . mode typeName  (19)
+	mode : .  (23)
+
+	IN  shift 76
+	OUT  shift 77
+	ID  reduce 23
+
+	mode  goto 78
+
+
+state 40
+	idList : idList ',' . ID  (43)
+
+	ID  shift 79
+	.  error
+
+
+state 41
+	parameterList : parameter ';' . parameterList  (17)
+
+	ID  shift 12
+	.  error
+
+	idList  goto 13
+	parameter  goto 14
+	parameterList  goto 80
+
+
+state 42
+	optionalParams : '(' parameterList ')' .  (5)
+
+	.  reduce 5
+
+
+state 43
+	arrayRecordRange : TYPE ID . IS option  (30)
+
+	IS  shift 81
+	.  error
+
+
+state 44
+	variable : idList ':' . ID  (42)
+	constant : idList ':' . CONSTANT ASSIGN constantExpr  (45)
+	exceptionDecl : idList ':' . EXCEPTION  (47)
+
+	CONSTANT  shift 82
+	EXCEPTION  shift 83
+	ID  shift 84
+	.  error
+
+
+state 45
+	procDecls : IS decls begin .  (7)
+
+	.  reduce 7
+
+
+state 46
+	decls : decl ';' . decls  (9)
+	decls : decl ';' .  (10)
+
+	PROCEDURE  shift 1
+	TYPE  shift 17
+	ID  shift 12
+	BEG  reduce 10
+
+	idList  goto 18
+	arrayRecordRange  goto 19
+	pushHead  goto 3
+	procHead  goto 4
+	procedure  goto 20
+	decls  goto 85
+	decl  goto 23
+	variable  goto 24
+	constant  goto 25
+	exceptionDecl  goto 26
+
+
+state 47
+	stmt : NULLWORD ';' .  (51)
+
+	.  reduce 51
+
+
+state 48
+	stmt : RAISE ID . ';'  (54)
+
+	';'  shift 86
+	.  error
+
+
+state 49
+	stmt : ID ASSIGN . expr ';'  (48)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 87
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+
+
+state 50
+	stmt : ID ';' .  (50)
+
+	.  reduce 50
+
+
+state 51
+	stmt : ID '(' . exprs ')' ';'  (49)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 88
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+	exprs  goto 89
+
+
+state 52
+	loopStmt : EXITWHEN . expr ';'  (61)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 90
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+
+
+state 53
+	loopStmt : EXIT . ';'  (60)
+
+	';'  shift 91
+	.  error
+
+
+state 54
+	loopStmt : stmt .  (59)
+
+	.  reduce 59
+
+
+state 55
+	loopOption : loopStart loopStmts . ENDLOOP  (55)
+	loopStmts : loopStmts . loopStmt  (57)
+
+	ENDLOOP  shift 92
+	EXITWHEN  shift 52
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	EXIT  shift 53
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	stmt  goto 54
+	loopOption  goto 36
+	ifStmt  goto 37
+	loopStmt  goto 93
+	beginIf  goto 38
+
+
+state 56
+	loopStmts : loopStmt .  (58)
+
+	.  reduce 58
+
+
+state 57
+	procExceptions : END .  (14)
+
+	.  reduce 14
+
+
+state 58
+	exception : EXCEPTION . exHandler  (102)
+
+	WHEN  shift 94
+	.  error
+
+	exHandler  goto 95
+
+
+state 59
+	procedure : procHead procDecls procStmts procExceptions .  (2)
+
+	.  reduce 2
+
+
+state 60
+	procExceptions : exception . END  (13)
+
+	END  shift 96
+	.  error
+
+
+state 61
+	stmts : stmts stmt .  (15)
+
+	.  reduce 15
+
+
+state 62
+	stmt : loopOption ';' .  (52)
+
+	.  reduce 52
+
+
+state 63
+	stmt : ifStmt ';' .  (53)
+
+	.  reduce 53
+
+
+state 64
+	factor : NOT . primary  (97)
+
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	.  error
+
+	primary  goto 97
+
+
+state 65
+	primary : ID .  (99)
+	primary : ID . '(' expr ')'  (100)
+
+	'('  shift 98
+	THEN  reduce 99
+	AND  reduce 99
+	OR  reduce 99
+	EQ  reduce 99
+	NEQ  reduce 99
+	GT  reduce 99
+	LT  reduce 99
+	GTE  reduce 99
+	LTE  reduce 99
+	EXP  reduce 99
+	';'  reduce 99
+	')'  reduce 99
+	','  reduce 99
+	'-'  reduce 99
+	'+'  reduce 99
+	'*'  reduce 99
+	'/'  reduce 99
+
+
+state 66
+	primary : NUMBER .  (98)
+
+	.  reduce 98
+
+
+state 67
+	primary : '(' . expr ')'  (101)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 99
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+
+
+state 68
+	simpleExpr : '-' . term  (86)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	term  goto 100
+
+
+state 69
+	factor : primary .  (96)
+
+	.  reduce 96
+
+
+state 70
+	term : factor .  (91)
+	factor : factor . EXP primary  (95)
+
+	EXP  shift 101
+	THEN  reduce 91
+	AND  reduce 91
+	OR  reduce 91
+	EQ  reduce 91
+	NEQ  reduce 91
+	GT  reduce 91
+	LT  reduce 91
+	GTE  reduce 91
+	LTE  reduce 91
+	';'  reduce 91
+	')'  reduce 91
+	','  reduce 91
+	'-'  reduce 91
+	'+'  reduce 91
+	'*'  reduce 91
+	'/'  reduce 91
+
+
+state 71
+	thenPart : expr . THEN  (64)
+	expr : expr . booleanOp relation  (74)
+
+	THEN  shift 102
+	AND  shift 103
+	OR  shift 104
+	.  error
+
+	booleanOp  goto 105
+
+
+state 72
+	simpleExpr : term .  (87)
+	term : term . multiplyingOp factor  (92)
+
+	'*'  shift 106
+	'/'  shift 107
+	THEN  reduce 87
+	AND  reduce 87
+	OR  reduce 87
+	EQ  reduce 87
+	NEQ  reduce 87
+	GT  reduce 87
+	LT  reduce 87
+	GTE  reduce 87
+	LTE  reduce 87
+	';'  reduce 87
+	')'  reduce 87
+	','  reduce 87
+	'-'  reduce 87
+	'+'  reduce 87
+
+	multiplyingOp  goto 108
+
+
+state 73
+	relation : simpleExpr .  (79)
+	simpleExpr : simpleExpr . addingOp term  (88)
+
+	'-'  shift 109
+	'+'  shift 110
+	THEN  reduce 79
+	AND  reduce 79
+	OR  reduce 79
+	EQ  reduce 79
+	NEQ  reduce 79
+	GT  reduce 79
+	LT  reduce 79
+	GTE  reduce 79
+	LTE  reduce 79
+	';'  reduce 79
+	')'  reduce 79
+	','  reduce 79
+
+	addingOp  goto 111
+
+
+state 74
+	expr : relation .  (75)
+	relation : relation . relationalOp simpleExpr  (78)
+
+	EQ  shift 112
+	NEQ  shift 113
+	GT  shift 114
+	LT  shift 115
+	GTE  shift 116
+	LTE  shift 117
+	THEN  reduce 75
+	AND  reduce 75
+	OR  reduce 75
+	';'  reduce 75
+	')'  reduce 75
+	','  reduce 75
+
+	relationalOp  goto 118
+
+
+state 75
+	ifStmt : beginIf thenPart . stmtsPart elseifOption elseOption ENDIF  (62)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	stmts  goto 119
+	stmt  goto 35
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+	stmtsPart  goto 120
+
+
+state 76
+	mode : IN .  (20)
+	mode : IN . OUT  (22)
+
+	OUT  shift 121
+	ID  reduce 20
+
+
+state 77
+	mode : OUT .  (21)
+
+	.  reduce 21
+
+
+state 78
+	parameter : idList ':' mode . typeName  (19)
+
+	ID  shift 122
+	.  error
+
+	typeName  goto 123
+
+
+state 79
+	idList : idList ',' ID .  (43)
+
+	.  reduce 43
+
+
+state 80
+	parameterList : parameter ';' parameterList .  (17)
+
+	.  reduce 17
+
+
+state 81
+	arrayRecordRange : TYPE ID IS . option  (30)
+
+	ARRAY  shift 124
+	RECORD  shift 125
+	RANGE  shift 126
+	.  error
+
+	option  goto 127
+	array  goto 128
+	range  goto 129
+	record  goto 130
+
+
+state 82
+	constant : idList ':' CONSTANT . ASSIGN constantExpr  (45)
+
+	ASSIGN  shift 131
+	.  error
+
+
+state 83
+	exceptionDecl : idList ':' EXCEPTION .  (47)
+
+	.  reduce 47
+
+
+state 84
+	variable : idList ':' ID .  (42)
+
+	.  reduce 42
+
+
+state 85
+	decls : decl ';' decls .  (9)
+
+	.  reduce 9
+
+
+state 86
+	stmt : RAISE ID ';' .  (54)
+
+	.  reduce 54
+
+
+state 87
+	stmt : ID ASSIGN expr . ';'  (48)
+	expr : expr . booleanOp relation  (74)
+
+	AND  shift 103
+	OR  shift 104
+	';'  shift 132
+	.  error
+
+	booleanOp  goto 105
+
+
+state 88
+	exprs : expr . ',' exprs  (72)
+	exprs : expr .  (73)
+	expr : expr . booleanOp relation  (74)
+
+	AND  shift 103
+	OR  shift 104
+	','  shift 133
+	')'  reduce 73
+
+	booleanOp  goto 105
+
+
+state 89
+	stmt : ID '(' exprs . ')' ';'  (49)
+
+	')'  shift 134
+	.  error
+
+
+state 90
+	loopStmt : EXITWHEN expr . ';'  (61)
+	expr : expr . booleanOp relation  (74)
+
+	AND  shift 103
+	OR  shift 104
+	';'  shift 135
+	.  error
+
+	booleanOp  goto 105
+
+
+state 91
+	loopStmt : EXIT ';' .  (60)
+
+	.  reduce 60
+
+
+state 92
+	loopOption : loopStart loopStmts ENDLOOP .  (55)
+
+	.  reduce 55
+
+
+state 93
+	loopStmts : loopStmts loopStmt .  (57)
+
+	.  reduce 57
+
+
+state 94
+	exHandler : WHEN . afterWhen  (104)
+
+	OTHERS  shift 136
+	ID  shift 137
+	.  error
+
+	afterWhen  goto 138
+	choice  goto 139
+
+
+state 95
+	exception : EXCEPTION exHandler .  (102)
+	exHandler : exHandler . WHEN afterWhen  (103)
+
+	WHEN  shift 140
+	END  reduce 102
+
+
+state 96
+	procExceptions : exception END .  (13)
+
+	.  reduce 13
+
+
+state 97
+	factor : NOT primary .  (97)
+
+	.  reduce 97
+
+
+state 98
+	primary : ID '(' . expr ')'  (100)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 141
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+
+
+state 99
+	expr : expr . booleanOp relation  (74)
+	primary : '(' expr . ')'  (101)
+
+	AND  shift 103
+	OR  shift 104
+	')'  shift 142
+	.  error
+
+	booleanOp  goto 105
+
+
+state 100
+	simpleExpr : '-' term .  (86)
+	term : term . multiplyingOp factor  (92)
+
+	'*'  shift 106
+	'/'  shift 107
+	THEN  reduce 86
+	AND  reduce 86
+	OR  reduce 86
+	EQ  reduce 86
+	NEQ  reduce 86
+	GT  reduce 86
+	LT  reduce 86
+	GTE  reduce 86
+	LTE  reduce 86
+	';'  reduce 86
+	')'  reduce 86
+	','  reduce 86
+	'-'  reduce 86
+	'+'  reduce 86
+
+	multiplyingOp  goto 108
+
+
+state 101
+	factor : factor EXP . primary  (95)
+
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	.  error
+
+	primary  goto 143
+
+
+state 102
+	thenPart : expr THEN .  (64)
+
+	.  reduce 64
+
+
+state 103
+	booleanOp : AND .  (76)
+
+	.  reduce 76
+
+
+state 104
+	booleanOp : OR .  (77)
+
+	.  reduce 77
+
+
+state 105
+	expr : expr booleanOp . relation  (74)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 144
+
+
+state 106
+	multiplyingOp : '*' .  (93)
+
+	.  reduce 93
+
+
+state 107
+	multiplyingOp : '/' .  (94)
+
+	.  reduce 94
+
+
+state 108
+	term : term multiplyingOp . factor  (92)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	.  error
+
+	primary  goto 69
+	factor  goto 145
+
+
+state 109
+	addingOp : '-' .  (90)
+
+	.  reduce 90
+
+
+state 110
+	addingOp : '+' .  (89)
+
+	.  reduce 89
+
+
+state 111
+	simpleExpr : simpleExpr addingOp . term  (88)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	term  goto 146
+
+
+state 112
+	relationalOp : EQ .  (80)
+
+	.  reduce 80
+
+
+state 113
+	relationalOp : NEQ .  (81)
+
+	.  reduce 81
+
+
+state 114
+	relationalOp : GT .  (84)
+
+	.  reduce 84
+
+
+state 115
+	relationalOp : LT .  (82)
+
+	.  reduce 82
+
+
+state 116
+	relationalOp : GTE .  (85)
+
+	.  reduce 85
+
+
+state 117
+	relationalOp : LTE .  (83)
+
+	.  reduce 83
+
+
+state 118
+	relation : relation relationalOp . simpleExpr  (78)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	term  goto 72
+	simpleExpr  goto 147
+
+
+state 119
+	stmts : stmts . stmt  (15)
+	stmtsPart : stmts .  (65)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	ENDIF  reduce 65
+	ELSEIF  reduce 65
+	ELSE  reduce 65
+
+	loopStart  goto 32
+	stmt  goto 61
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+
+
+state 120
+	ifStmt : beginIf thenPart stmtsPart . elseifOption elseOption ENDIF  (62)
+	elseifOption : .  (67)
+
+	.  reduce 67
+
+	elseifOption  goto 148
+
+
+state 121
+	mode : IN OUT .  (22)
+
+	.  reduce 22
+
+
+state 122
+	typeName : ID .  (24)
+
+	.  reduce 24
+
+
+state 123
+	parameter : idList ':' mode typeName .  (19)
+
+	.  reduce 19
+
+
+state 124
+	array : ARRAY . '(' index DOTDOT index ')' OF ID  (34)
+
+	'('  shift 149
+	.  error
+
+
+state 125
+	record : RECORD . componentList ENDREC  (37)
+
+	ID  shift 12
+	.  error
+
+	idList  goto 150
+	variable  goto 151
+	componentList  goto 152
+	component  goto 153
+
+
+state 126
+	range : RANGE . index DOTDOT index  (41)
+
+	ID  shift 154
+	NUMBER  shift 155
+	.  error
+
+	index  goto 156
+
+
+state 127
+	arrayRecordRange : TYPE ID IS option .  (30)
+
+	.  reduce 30
+
+
+state 128
+	option : array .  (31)
+
+	.  reduce 31
+
+
+state 129
+	option : range .  (33)
+
+	.  reduce 33
+
+
+state 130
+	option : record .  (32)
+
+	.  reduce 32
+
+
+state 131
+	constant : idList ':' CONSTANT ASSIGN . constantExpr  (45)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 157
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+	constantExpr  goto 158
+
+
+state 132
+	stmt : ID ASSIGN expr ';' .  (48)
+
+	.  reduce 48
+
+
+state 133
+	exprs : expr ',' . exprs  (72)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 88
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+	exprs  goto 159
+
+
+state 134
+	stmt : ID '(' exprs ')' . ';'  (49)
+
+	';'  shift 160
+	.  error
+
+
+state 135
+	loopStmt : EXITWHEN expr ';' .  (61)
+
+	.  reduce 61
+
+
+state 136
+	afterWhen : OTHERS . ARROW stmts  (106)
+
+	ARROW  shift 161
+	.  error
+
+
+state 137
+	choice : ID . '|' choice  (107)
+	choice : ID .  (108)
+
+	'|'  shift 162
+	ARROW  reduce 108
+
+
+state 138
+	exHandler : WHEN afterWhen .  (104)
+
+	.  reduce 104
+
+
+state 139
+	afterWhen : choice . ARROW stmts  (105)
+
+	ARROW  shift 163
+	.  error
+
+
+state 140
+	exHandler : exHandler WHEN . afterWhen  (103)
+
+	OTHERS  shift 136
+	ID  shift 137
+	.  error
+
+	afterWhen  goto 164
+	choice  goto 139
+
+
+state 141
+	expr : expr . booleanOp relation  (74)
+	primary : ID '(' expr . ')'  (100)
+
+	AND  shift 103
+	OR  shift 104
+	')'  shift 165
+	.  error
+
+	booleanOp  goto 105
+
+
+state 142
+	primary : '(' expr ')' .  (101)
+
+	.  reduce 101
+
+
+state 143
+	factor : factor EXP primary .  (95)
+
+	.  reduce 95
+
+
+state 144
+	expr : expr booleanOp relation .  (74)
+	relation : relation . relationalOp simpleExpr  (78)
+
+	EQ  shift 112
+	NEQ  shift 113
+	GT  shift 114
+	LT  shift 115
+	GTE  shift 116
+	LTE  shift 117
+	THEN  reduce 74
+	AND  reduce 74
+	OR  reduce 74
+	';'  reduce 74
+	')'  reduce 74
+	','  reduce 74
+
+	relationalOp  goto 118
+
+
+state 145
+	term : term multiplyingOp factor .  (92)
+	factor : factor . EXP primary  (95)
+
+	EXP  shift 101
+	THEN  reduce 92
+	AND  reduce 92
+	OR  reduce 92
+	EQ  reduce 92
+	NEQ  reduce 92
+	GT  reduce 92
+	LT  reduce 92
+	GTE  reduce 92
+	LTE  reduce 92
+	';'  reduce 92
+	')'  reduce 92
+	','  reduce 92
+	'-'  reduce 92
+	'+'  reduce 92
+	'*'  reduce 92
+	'/'  reduce 92
+
+
+state 146
+	simpleExpr : simpleExpr addingOp term .  (88)
+	term : term . multiplyingOp factor  (92)
+
+	'*'  shift 106
+	'/'  shift 107
+	THEN  reduce 88
+	AND  reduce 88
+	OR  reduce 88
+	EQ  reduce 88
+	NEQ  reduce 88
+	GT  reduce 88
+	LT  reduce 88
+	GTE  reduce 88
+	LTE  reduce 88
+	';'  reduce 88
+	')'  reduce 88
+	','  reduce 88
+	'-'  reduce 88
+	'+'  reduce 88
+
+	multiplyingOp  goto 108
+
+
+state 147
+	relation : relation relationalOp simpleExpr .  (78)
+	simpleExpr : simpleExpr . addingOp term  (88)
+
+	'-'  shift 109
+	'+'  shift 110
+	THEN  reduce 78
+	AND  reduce 78
+	OR  reduce 78
+	EQ  reduce 78
+	NEQ  reduce 78
+	GT  reduce 78
+	LT  reduce 78
+	GTE  reduce 78
+	LTE  reduce 78
+	';'  reduce 78
+	')'  reduce 78
+	','  reduce 78
+
+	addingOp  goto 111
+
+
+state 148
+	ifStmt : beginIf thenPart stmtsPart elseifOption . elseOption ENDIF  (62)
+	elseifOption : elseifOption . beginElseif thenPart stmtsPart  (66)
+	elseOption : .  (70)
+
+	ELSEIF  shift 166
+	ELSE  shift 167
+	ENDIF  reduce 70
+
+	elseOption  goto 168
+	beginElseif  goto 169
+	beginElse  goto 170
+
+
+state 149
+	array : ARRAY '(' . index DOTDOT index ')' OF ID  (34)
+
+	ID  shift 154
+	NUMBER  shift 155
+	.  error
+
+	index  goto 171
+
+
+state 150
+	variable : idList . ':' ID  (42)
+	idList : idList . ',' ID  (43)
+
+	':'  shift 172
+	','  shift 40
+	.  error
+
+
+state 151
+	component : variable . ';'  (40)
+
+	';'  shift 173
+	.  error
+
+
+state 152
+	record : RECORD componentList . ENDREC  (37)
+	componentList : componentList . component  (38)
+
+	ENDREC  shift 174
+	ID  shift 12
+	.  error
+
+	idList  goto 150
+	variable  goto 151
+	component  goto 175
+
+
+state 153
+	componentList : component .  (39)
+
+	.  reduce 39
+
+
+state 154
+	index : ID .  (36)
+
+	.  reduce 36
+
+
+state 155
+	index : NUMBER .  (35)
+
+	.  reduce 35
+
+
+state 156
+	range : RANGE index . DOTDOT index  (41)
+
+	DOTDOT  shift 176
+	.  error
+
+
+state 157
+	constantExpr : expr .  (46)
+	expr : expr . booleanOp relation  (74)
+
+	AND  shift 103
+	OR  shift 104
+	';'  reduce 46
+
+	booleanOp  goto 105
+
+
+state 158
+	constant : idList ':' CONSTANT ASSIGN constantExpr .  (45)
+
+	.  reduce 45
+
+
+state 159
+	exprs : expr ',' exprs .  (72)
+
+	.  reduce 72
+
+
+state 160
+	stmt : ID '(' exprs ')' ';' .  (49)
+
+	.  reduce 49
+
+
+state 161
+	afterWhen : OTHERS ARROW . stmts  (106)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	stmts  goto 177
+	stmt  goto 35
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+
+
+state 162
+	choice : ID '|' . choice  (107)
+
+	ID  shift 137
+	.  error
+
+	choice  goto 178
+
+
+state 163
+	afterWhen : choice ARROW . stmts  (105)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	stmts  goto 179
+	stmt  goto 35
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+
+
+state 164
+	exHandler : exHandler WHEN afterWhen .  (103)
+
+	.  reduce 103
+
+
+state 165
+	primary : ID '(' expr ')' .  (100)
+
+	.  reduce 100
+
+
+state 166
+	beginElseif : ELSEIF .  (68)
+
+	.  reduce 68
+
+
+state 167
+	beginElse : ELSE .  (71)
+
+	.  reduce 71
+
+
+state 168
+	ifStmt : beginIf thenPart stmtsPart elseifOption elseOption . ENDIF  (62)
+
+	ENDIF  shift 180
+	.  error
+
+
+state 169
+	elseifOption : elseifOption beginElseif . thenPart stmtsPart  (66)
+
+	NOT  shift 64
+	ID  shift 65
+	NUMBER  shift 66
+	'('  shift 67
+	'-'  shift 68
+	.  error
+
+	primary  goto 69
+	factor  goto 70
+	expr  goto 71
+	term  goto 72
+	simpleExpr  goto 73
+	relation  goto 74
+	thenPart  goto 181
+
+
+state 170
+	elseOption : beginElse . stmtsPart  (69)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	stmts  goto 119
+	stmt  goto 35
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+	stmtsPart  goto 182
+
+
+state 171
+	array : ARRAY '(' index . DOTDOT index ')' OF ID  (34)
+
+	DOTDOT  shift 183
+	.  error
+
+
+state 172
+	variable : idList ':' . ID  (42)
+
+	ID  shift 84
+	.  error
+
+
+state 173
+	component : variable ';' .  (40)
+
+	.  reduce 40
+
+
+state 174
+	record : RECORD componentList ENDREC .  (37)
+
+	.  reduce 37
+
+
+state 175
+	componentList : componentList component .  (38)
+
+	.  reduce 38
+
+
+state 176
+	range : RANGE index DOTDOT . index  (41)
+
+	ID  shift 154
+	NUMBER  shift 155
+	.  error
+
+	index  goto 184
+
+
+state 177
+	stmts : stmts . stmt  (15)
+	afterWhen : OTHERS ARROW stmts .  (106)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	END  reduce 106
+	WHEN  reduce 106
+
+	loopStart  goto 32
+	stmt  goto 61
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+
+
+state 178
+	choice : ID '|' choice .  (107)
+
+	.  reduce 107
+
+
+state 179
+	stmts : stmts . stmt  (15)
+	afterWhen : choice ARROW stmts .  (105)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	END  reduce 105
+	WHEN  reduce 105
+
+	loopStart  goto 32
+	stmt  goto 61
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+
+
+state 180
+	ifStmt : beginIf thenPart stmtsPart elseifOption elseOption ENDIF .  (62)
+
+	.  reduce 62
+
+
+state 181
+	elseifOption : elseifOption beginElseif thenPart . stmtsPart  (66)
+
+	NULLWORD  shift 27
+	LOOP  shift 28
+	IF  shift 29
+	RAISE  shift 30
+	ID  shift 31
+	.  error
+
+	loopStart  goto 32
+	stmts  goto 119
+	stmt  goto 35
+	loopOption  goto 36
+	ifStmt  goto 37
+	beginIf  goto 38
+	stmtsPart  goto 185
+
+
+state 182
+	elseOption : beginElse stmtsPart .  (69)
+
+	.  reduce 69
+
+
+state 183
+	array : ARRAY '(' index DOTDOT . index ')' OF ID  (34)
+
+	ID  shift 154
+	NUMBER  shift 155
+	.  error
+
+	index  goto 186
+
+
+state 184
+	range : RANGE index DOTDOT index .  (41)
+
+	.  reduce 41
+
+
+state 185
+	elseifOption : elseifOption beginElseif thenPart stmtsPart .  (66)
+
+	.  reduce 66
+
+
+state 186
+	array : ARRAY '(' index DOTDOT index . ')' OF ID  (34)
+
+	')'  shift 187
+	.  error
+
+
+state 187
+	array : ARRAY '(' index DOTDOT index ')' . OF ID  (34)
+
+	OF  shift 188
+	.  error
+
+
+state 188
+	array : ARRAY '(' index DOTDOT index ')' OF . ID  (34)
+
+	ID  shift 189
+	.  error
+
+
+state 189
+	array : ARRAY '(' index DOTDOT index ')' OF ID .  (34)
+
+	.  reduce 34
+
+
+55 terminals, 58 nonterminals
+109 grammar rules, 190 states

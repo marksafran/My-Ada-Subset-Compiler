@@ -1,0 +1,9 @@
+procedure main is
+
+   a, c : integer;
+begin
+   a := c ** c;
+   c := 2;
+
+
+end;

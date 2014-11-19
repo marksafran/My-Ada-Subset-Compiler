@@ -1,0 +1,68 @@
+0  b := ?
+1  contents b, 0 := ?
+2  contents b, 1 := 4
+3  pc := ?
+4  halt
+ASSIGNMENT
+5  r1 :=  5
+6  contents b, 4 := r1
+ASSIGNMENT
+7  r1 :=  6
+8  contents b, 5 := r1
+ASSIGNMENT
+9  r1 :=  7
+10  contents b, 6 := r1
+RELATIONAL
+11  r1 := contents b, 4
+12  r2 := contents b, 5
+13  r3 := r1 and r2
+ASSIGNMENT
+14  contents b, 4 := r3
+RELATIONAL
+15  r3 := contents b, 4
+16  r4 := contents b, 5
+17  r5 := r3 or r4
+ASSIGNMENT
+18  contents b, 5 := r5
+RELATIONAL
+19  r5 := contents b, 4
+20  r6 := contents b, 5
+21  r7 := r5 = r6
+ASSIGNMENT
+22  contents b, 4 := r7
+RELATIONAL
+23  r7 := contents b, 6
+24  r8 := contents b, 5
+25  r9 := r7 < r8
+ASSIGNMENT
+26  contents b, 5 := r9
+RELATIONAL
+27  r9 := contents b, 6
+28  r10 := contents b, 4
+29  r11 := r9 <= r10
+ASSIGNMENT
+30  contents b, 6 := r11
+RELATIONAL
+31  r11 := contents b, 6
+32  r12 := contents b, 5
+33  r13 := r11 < r12
+ASSIGNMENT
+34  contents b, 4 := r13
+RELATIONAL
+35  r13 := contents b, 4
+36  r14 := contents b, 6
+37  r15 := r13 <= r14
+ASSIGNMENT
+38  contents b, 5 := r15
+39  r15 := not contents b, 4
+ASSIGNMENT
+40  contents b, 5 := r15
+41  r15 := - r15
+ASSIGNMENT
+42  contents b, 6 := r15
+END PROCEDURE
+43  r15 := contents b, 1
+44  b := contents b, 3
+45  pc := r15
+the reg count is: 15
+Instruction Count = 45
